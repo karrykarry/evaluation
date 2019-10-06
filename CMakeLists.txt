@@ -179,7 +179,15 @@ add_executable(pf_evaluation src/pf_evaluation.cpp)
 target_link_libraries(pf_evaluation
 	${catkin_LIBRARIES}
 	${PCL_LIBRARIES}
+	${OpenCV_LIBRARIES}
 )
+
+add_executable(recovery node/recovery_node.cpp src/recovery.cpp)
+target_link_libraries(recovery
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
 
 #############
 ## Install ##
