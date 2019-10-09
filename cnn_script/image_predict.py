@@ -13,12 +13,12 @@ import cv2
 
 
 model_path = "../model/learning-image.h5"
-images_folder = "/home/amsl/Pictures/sample/pikachu/"
+images_folder = "/home/amsl/Pictures/2018/0/"
 
 # load model
 model = load_model(model_path)
 # image_shape = (28, 28, 1)
-image_shape = (75, 75, 3)
+image_shape = (21, 21, 3)
 data_size = 75 * 75 * 3
 
 
@@ -34,16 +34,16 @@ def crop_resize(image_path):
     resized = crop.resize(image_shape[:2])  # use width x height
     img = np.array(resized).astype("float32")
     # print(image_.size)
-    print(img.shape)
+    # print(img.shape)
     # img = np.array(img_gray).astype("float32")
     img /= 255
     # img_ = img.reshape(data_size)
-    img = img.reshape(75, 75, 3)
+    img = img.reshape(image_shape)
     return img
 
 
 folder = Path(images_folder)
-image_paths = [str(f) for f in folder.glob("*.jpg")]
+image_paths = [str(f) for f in folder.glob("*.png")]
 images = [crop_resize(p) for p in image_paths]
 images = np.asarray(images)
     
@@ -52,5 +52,10 @@ predicted = model.predict_classes(images)
 
 print("\n")
 print("-----result-----\n")
+sum = 0;
 for image_path, predict in zip(image_paths, predicted):
+    sum += predict
     print(image_path,  predict)
+
+print("sum:", sum)
+
