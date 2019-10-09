@@ -10,6 +10,7 @@
 #include<std_msgs/Int32.h>
 #include<std_msgs/Int32MultiArray.h>
 #include<std_msgs/Empty.h>
+#include<std_msgs/Bool.h>
 #include<sensor_msgs/PointCloud2.h>
 
 class Recovery{	
@@ -22,12 +23,14 @@ class Recovery{
 
 	private:
 		ros::Publisher rebest_pub;
+		ros::Publisher go_pub;
 
 		ros::Subscriber better_sub;
 		ros::Subscriber process_sub;
 		
 		std_msgs::Int32MultiArray better_score_num;
 		sensor_msgs::PointCloud2 buffer_pc;
+		int buffer_num;
 };
 
 #endif
