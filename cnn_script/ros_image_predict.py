@@ -19,19 +19,18 @@ import roslib
 # roslib.load_manifest('my_package')
 import sys
 import rospy
-from std_msgs.msg import String
 from sensor_msgs.msg import Image
-from cv_bridge import CvBridge, CvBridgeError
-import numpy as np
 
 #Cnn_classifier
+import numpy as np
+import tensorflow as tf
 from keras.models import load_model
+
 
 #cv2
 sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages')
 import cv2
 
-image_shape = (280, 280, 3)
 
 
 def image_to_numpy(msg):
@@ -53,41 +52,56 @@ def image_to_numpy(msg):
     
     if channels == 1:
         data = data[...,0]
+    data = data / 255.0
     return data
 
 
-
-class Cnn_classifier:
-    def __init__(self):
-        print("a")
-        model_path = "../model/learning-image.h5"
-        model = load_model(model_path)
-
 class Image_checker:
     def __init__(self):
-        self.msg_sub = rospy.Subscriber("/camera/rgb/resized_image", Image, self.callback)
-        self.bridge = CvBridge()
-        Cnn_classifier();
+        self.msg_sub = rospy.Subscriber("/pf_score/image", Image, self.callback)
+        # 事前に適当に呼び出しておく
+        X = np.zeros((1, 21, 21, 3))
+        model_path = "../model/learning-image.h5"
+        self.model = load_model(model_path)
+        
+        self.model.predict(X)
+        # print("a",model)
+        print('image_predict start')
 
     def callback(self, data):
 
         image_np = image_to_numpy(data)
+        image_np = image_np[:, :, ::-1]
+        image_np = [image_np]
+        image_np = np.asarray(image_np)
+        predicted = self.model.predict_classes(image_np)
         
-        # try:
-        #     cv_image  = self.bridge.imgmsg_to_cv2(data, "bgr8")
-        # except CvBridgeError as e:
-        #     print (e)
-
-        # img = self.crop_resized(cv_image)
-        # cv2.imshow("Image window", img)
-        # cv2.waitKey(1)
-
-    # def crop_resized(self, image):
-        # dst = cv2.resize(image, dsize=image_shape[:2])
-        # image_np = np.asarray(dst)
-        print(image_np.shape)
+        for predict in predicted:
+            print(predict)
+    
+        # print(image_np.shape)
         
-        # return dst
+    # def image_to_numpy(self, msg):
+    #     if not msg.encoding == "bgr8":
+    #         raise TypeError('Unrecognized encoding {}'.format(msg.encoding))
+    
+    #     dtype_class = np.uint8
+    #     channels = 3
+    #     dtype = np.dtype(dtype_class)
+    #     dtype = dtype.newbyteorder('>' if msg.is_bigendian else '<')
+    #     shape = (msg.height, msg.width, channels)
+        
+        
+    #     data = np.fromstring(msg.data, dtype=dtype).reshape(shape)
+    #     data.strides = (
+    #             msg.step,
+    #             dtype.itemsize * channels,
+    #             dtype.itemsize
+    #     )
+    
+    #     if channels == 1:
+    #         data = data[...,0]
+    #     return data
 
 
 def main(args):

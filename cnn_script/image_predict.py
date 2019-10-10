@@ -13,7 +13,7 @@ import cv2
 
 
 model_path = "../model/learning-image.h5"
-images_folder = "/home/amsl/Pictures/2018/0/"
+images_folder = "/home/amsl/Pictures/dataset/0/"
 
 # load model
 model = load_model(model_path)
@@ -47,12 +47,13 @@ image_paths = [str(f) for f in folder.glob("*.png")]
 images = [crop_resize(p) for p in image_paths]
 images = np.asarray(images)
     
-print(images.shape)
+print(images[0])
 predicted = model.predict_classes(images)
 
 print("\n")
 print("-----result-----\n")
 sum = 0;
+print(predicted)
 for image_path, predict in zip(image_paths, predicted):
     sum += predict
     print(image_path,  predict)
