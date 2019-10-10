@@ -113,8 +113,6 @@ def main(args):
 
     except KeyboardInterrupt:
         print("Shut down")
-    cv2.destroyAllwindows()
-
 
 if __name__ == '__main__':
     main(sys.argv)
