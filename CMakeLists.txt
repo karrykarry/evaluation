@@ -191,6 +191,20 @@ target_link_libraries(recovery
 )
 
 
+
+add_executable(dataset_save src/dataset_src/dataset_save.cpp)
+target_link_libraries(dataset_save
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+	${OpenCV_LIBRARIES}
+)
+
+add_executable(itst_manager node/itst_manager_node.cpp src/dataset_src/itst_manager.cpp)
+target_link_libraries(itst_manager
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
 #############
 ## Install ##
 #############

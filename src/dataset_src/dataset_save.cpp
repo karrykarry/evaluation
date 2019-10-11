@@ -1,39 +1,39 @@
 /*
+ * dataset用の画像を保存するもの
  *
  */
-#include <stdio.h>
-#include <iostream>
-#include <string>
+#include<stdio.h>
+#include<iostream>
+#include<string>
 
-#include <ros/ros.h>
-#include <std_msgs/Int32.h>
-#include <std_msgs/Float64MultiArray.h>
-#include <sensor_msgs/PointCloud.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <geometry_msgs/Point.h>
-#include <nav_msgs/OccupancyGrid.h>
+#include<ros/ros.h>
+#include<std_msgs/Int32.h>
+#include<std_msgs/Float64MultiArray.h>
+#include<sensor_msgs/PointCloud.h>
+#include<sensor_msgs/PointCloud2.h>
+#include<geometry_msgs/Point.h>
+#include<nav_msgs/OccupancyGrid.h>
 
-#include <tf/tf.h>
+#include<tf/tf.h>
 
-#include <cv_bridge/cv_bridge.h>
-#include <image_transport/image_transport.h>
+#include<cv_bridge/cv_bridge.h>
+#include<image_transport/image_transport.h>
 #include<opencv2/opencv.hpp>
 #include<opencv2/core.hpp>
 #include<opencv2/highgui.hpp>
 #include<opencv2/imgproc.hpp>
 #include<opencv2/imgcodecs.hpp>
 
-class Pf_eva{
+class Dataset_save{
 	public:
-		Pf_eva(ros::NodeHandle n, ros::NodeHandle private_nh_);
-		~Pf_eva();
+		Dataset_save(ros::NodeHandle n, ros::NodeHandle private_nh_);
+		~Dataset_save();
 		image_transport::ImageTransport it;
 		void scoreCallback(const std_msgs::Float64MultiArrayConstPtr& msgs);
 		void processCallback(const std_msgs::Int32ConstPtr& msgs);
 	
 	private:
 		ros::Publisher grid_pub;
-		ros::Publisher grid_pub_;
 		ros::Subscriber score_sub;
 		ros::Subscriber process_sub;
 
@@ -43,6 +43,7 @@ class Pf_eva{
 
 		double P_RANGE, P_INTER, GRID_WIDTH;
 		std::string FRAME_ID;
+		std::string FILE_PATH;
 		std::string file_dir;
 		std::ofstream writing_file0;
 		std::ofstream writing_file1;
@@ -59,40 +60,42 @@ class Pf_eva{
 
 };
 
-Pf_eva::Pf_eva(ros::NodeHandle n, ros::NodeHandle private_nh_):
+Dataset_save::Dataset_save(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	it(private_nh_)
 {
 	grid_pub = n.advertise<nav_msgs::OccupancyGrid>("/score_grid", 1);
-	grid_pub_ = n.advertise<nav_msgs::OccupancyGrid>("/score_grid/vis", 1);
 	
-	score_sub = n.subscribe("/score/vis/context", 10, &Pf_eva::scoreCallback, this);
-	process_sub = n.subscribe("/score/process", 10, &Pf_eva::processCallback, this);
+	score_sub = n.subscribe("/score/vis/context", 10, &Dataset_save::scoreCallback, this);
+	process_sub = n.subscribe("/score/process", 10, &Dataset_save::processCallback, this);
 
 	image_pub = it.advertise("/pf_score/image",10);
 	
 	private_nh_.param("PF_RANGE", P_RANGE, {5.0});	//パーティクルの範囲
 	private_nh_.param("PF_INTER", P_INTER, {0.5});	//間引く距離
-	private_nh_.param("FRAME_ID", FRAME_ID, {"/context_estimate"});	//間引く距離
+	private_nh_.param("FRAME_ID", FRAME_ID, {"/context_estimate"});
+	private_nh_.param("imgae_save_path", FILE_PATH, {"/home/amsl/m2_result/image"});
+
+	std::cout<<"FILE_PATH:"<<FILE_PATH<<std::endl;
 
     GRID_WIDTH = (P_RANGE / P_INTER)*2+1;
 	
-	writing_file0.open("/home/amsl/m2_result/image/0/context.csv", std::ios::out);
-	writing_file1.open("/home/amsl/m2_result/image/1/context.csv", std::ios::out);
-	writing_file2.open("/home/amsl/m2_result/image/2/context.csv", std::ios::out);
+	writing_file0.open(FILE_PATH+"/0/context.csv", std::ios::out);
+	writing_file1.open(FILE_PATH+"/1/context.csv", std::ios::out);
+	writing_file2.open(FILE_PATH+"/2/context.csv", std::ios::out);
 }
 
 
 template<typename T>
-T Pf_eva::MAX_(T val_1, T val_2){
+T Dataset_save::MAX_(T val_1, T val_2){
 	return val_1 > val_2 ? val_1 : val_2;
 }
 
 template<typename T>
-T Pf_eva::MIN_(T val_1, T val_2){
+T Dataset_save::MIN_(T val_1, T val_2){
 	return val_1 < val_2 ? val_1 : val_2;
 }
 
-Pf_eva::~Pf_eva(){
+Dataset_save::~Dataset_save(){
 	std::cout<<"----save now----"<<std::endl;
 
 	for(auto min : min0){
@@ -124,13 +127,13 @@ Pf_eva::~Pf_eva(){
 
 
 void
-Pf_eva::scoreCallback(const std_msgs::Float64MultiArrayConstPtr& msgs){
+Dataset_save::scoreCallback(const std_msgs::Float64MultiArrayConstPtr& msgs){
 
 	buffer_array = *msgs;
 }
 
 void
-Pf_eva::processCallback(const std_msgs::Int32ConstPtr& msg){
+Dataset_save::processCallback(const std_msgs::Int32ConstPtr& msg){
 	
 	
 	cv::Mat color_image;
@@ -168,20 +171,20 @@ Pf_eva::processCallback(const std_msgs::Int32ConstPtr& msg){
 	if(msg->data == 0){
 		min0.push_back(min_v);
 		max0.push_back(max_v);
-		file_dir = "/home/amsl/m2_result/image/0";
+		file_dir = FILE_PATH+"/0";
 	}
 	else if(msg->data == 1){
 		min1.push_back(min_v);
 		max1.push_back(max_v);	
-		file_dir = "/home/amsl/m2_result/image/1";
+		file_dir = FILE_PATH+"/1";
 	}
 	else{
 		min2.push_back(min_v);
 		max2.push_back(max_v);	
-		file_dir = "/home/amsl/m2_result/image/2";
+		file_dir = FILE_PATH+"/2";
 	}
-	std::string file_dir3 = file_dir + "/" + oss.str()+"_"+std::to_string(min_v)+"_"+std::to_string(max_v);
-	cv::imwrite(file_dir3 + ".png", color_image);
+	std::string image_file_dir = file_dir + "/" + oss.str()+"_"+std::to_string(min_v)+"_"+std::to_string(max_v);
+	cv::imwrite(image_file_dir + ".png", color_image);
 
 
 	nav_msgs::OccupancyGrid grid;
@@ -215,7 +218,7 @@ int main(int argc, char** argv)
 	ros::NodeHandle private_nh_("~");
     ROS_INFO("\033[1;32m---->\033[0m pf_evaluation Started.");
 
-	Pf_eva pf_eva(n, private_nh_);
+	Dataset_save dataset_save(n, private_nh_);
 
 	ros::spin();
 
