@@ -73,7 +73,7 @@ Dataset_save::Dataset_save(ros::NodeHandle n, ros::NodeHandle private_nh_):
 	private_nh_.param("PF_RANGE", P_RANGE, {5.0});	//パーティクルの範囲
 	private_nh_.param("PF_INTER", P_INTER, {0.5});	//間引く距離
 	private_nh_.param("FRAME_ID", FRAME_ID, {"/context_estimate"});
-	private_nh_.param("imgae_save_path", FILE_PATH, {"/home/amsl/m2_result/image"});
+	private_nh_.param("image_save_path", FILE_PATH, {"/home/amsl/m2_result/image"});
 
 	std::cout<<"FILE_PATH:"<<FILE_PATH<<std::endl;
 
@@ -144,9 +144,9 @@ Dataset_save::processCallback(const std_msgs::Int32ConstPtr& msg){
 	double max_v = buffer_array.data[0];
 	double min_v = buffer_array.data[0];
 	
-	for(auto msg : buffer_array.data){
-		max_v = MAX_((double)msg,max_v);
-		min_v = MIN_((double)msg,min_v);
+	for(auto buffer_data : buffer_array.data){
+		max_v = MAX_((double)buffer_data,max_v);
+		min_v = MIN_((double)buffer_data,min_v);
 	}
 
 	for(int i=0; i<GRID_WIDTH; i++){
