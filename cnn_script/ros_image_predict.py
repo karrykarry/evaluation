@@ -20,6 +20,7 @@ import roslib
 import sys
 import rospy
 from sensor_msgs.msg import Image
+from std_msgs.msg import Empty
 
 #Cnn_classifier
 import numpy as np
@@ -58,6 +59,8 @@ def image_to_numpy(msg):
 
 class Image_checker:
     def __init__(self):
+        self.positive_pub = rospy.Publisher("/result/positive", Empty, queue_size=10)
+        self.negative_pub = rospy.Publisher("/result/negative", Empty, queue_size=10)
         self.msg_sub = rospy.Subscriber("/pf_score/image", Image, self.callback)
         # 事前に適当に呼び出しておく
         X = np.zeros((1, 21, 21, 3))
@@ -76,8 +79,11 @@ class Image_checker:
         image_np = np.asarray(image_np)
         predicted = self.model.predict_classes(image_np)
         
-        for predict in predicted:
-            print(predict)
+        print(predicted[0])
+        if predicted[0] == 1:
+            self.positive_pub.publish(Empty())
+        else:
+            self.negative_pub.publish(Empty())
     
         # print(image_np.shape)
         
