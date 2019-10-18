@@ -153,8 +153,10 @@ Dataset_save::processCallback(const std_msgs::Int32ConstPtr& msg){
 		for(int j=0; j<GRID_WIDTH; j++){
 			double score = (1- (buffer_array.data[i*GRID_WIDTH+j] - min_v) / (max_v - min_v))*100;
 			states[i+j*GRID_WIDTH] = score;
-			
-			mono_image.at<uchar>(i, GRID_WIDTH-j) = score * (255.0/100.0);
+			int column = GRID_WIDTH-i-1;
+			int row = GRID_WIDTH-j-1;
+
+			mono_image.at<uchar>(column, row) = score * (255.0/100.0);
 		}
 	}
 

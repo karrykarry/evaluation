@@ -29,7 +29,6 @@ Dataset_itst::processCallback(const std_msgs::EmptyConstPtr &msgs){
 	std_msgs::Int32 rebest_num;
 	do{
 		better_score_num.data.erase(better_score_num.data.begin());
-		std::cout<<"process"<<std::endl;
 		if(!better_score_num.data.size()) break;
 		rebest_num.data = better_score_num.data[0];
 
@@ -39,6 +38,7 @@ Dataset_itst::processCallback(const std_msgs::EmptyConstPtr &msgs){
 
 	
 	if(!better_score_num.data.size()){
+		std::cout<<"next pcd"<<std::endl;
 		std_msgs::Bool em;
 		cnt_=0;
 		em.data = true;
