@@ -15,12 +15,12 @@ import cv2
 model_path = "../model/learning-image.h5"
 # images_folder = "/home/amsl/Pictures/dataset/1/"
 # images_folder = "/home/amsl/Pictures/2018_/2/"
-images_folder = "/home/amsl/Pictures/CNN/dataset-2019-09-25/0/"
-# images_folder = "/home/amsl/Pictures/CNN/2018-09-09/0/"
+# images_folder = "/home/amsl/Pictures/CNN/dataset-2019-09-25/0/"
+images_folder = "/home/amsl/Pictures/CNN/2018-09-09/2/"
 
 
-# miss_flag = True;
-miss_flag = False;
+miss_flag = True;
+# miss_flag = False;
 
 # load model
 model = load_model(model_path)
