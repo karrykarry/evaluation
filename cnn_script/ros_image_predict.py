@@ -79,11 +79,13 @@ class Image_checker:
         image_np = np.asarray(image_np)
         predicted = self.model.predict_classes(image_np)
         
-        print(predicted[0])
         if predicted[0] == 1:
+            print("\033[1;32m This is positive\033[0m\r", end="")
             self.positive_pub.publish(Empty())
         else:
-            self.negative_pub.publish(Empty())
+            print("\033[1;31m This is negative\033[0m\r", end="")
+            self.positive_pub.publish(Empty())
+            # self.negative_pub.publish(Empty())
     
         # print(image_np.shape)
         
@@ -114,6 +116,7 @@ def main(args):
     ic = Image_checker()
     rospy.init_node('node_estimate_checker.py', anonymous=True)
     print("node_estimate_checker")
+    print("\033[2J")
     try:
         rospy.spin()
 

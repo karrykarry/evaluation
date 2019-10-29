@@ -9,14 +9,14 @@ import sys
 from PIL import Image
 
 
-photo_count = 1347
+photo_count = 1525
 
 # 画像データ
 X = []
 # ラベル
 Y = []
 
-path = '/home/amsl/Pictures/dataset/'
+path = '/home/amsl/Pictures/CNN/dataset-2019-09-25/'
 
 image_shape = (21, 21, 3)
 
