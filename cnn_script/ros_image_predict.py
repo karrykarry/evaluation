@@ -78,14 +78,22 @@ class Image_checker:
         image_np = [image_np]
         image_np = np.asarray(image_np)
         predicted = self.model.predict_classes(image_np)
-        
+        probas = self.model.predict_proba(image_np)
+
         if predicted[0] == 1:
-            print("\033[1;32m This is positive\033[0m\r", end="")
+            for proba in probas:
+                proba_ = max(proba)
+
+            # print("\033[1;32m This is positive\033[0m\r", end="")
+            print("\033[1;32m This is positive\033[0m", proba_)
             self.positive_pub.publish(Empty())
         else:
-            print("\033[1;31m This is negative\033[0m\r", end="")
-            self.positive_pub.publish(Empty())
-            # self.negative_pub.publish(Empty())
+            for proba in probas:
+                proba_ = min(proba)
+            # print("\033[1;31m This is negative\033[0m\r", end="")
+            print("\033[1;31m This is negative\033[0m", proba_)
+            # self.positive_pub.publish(Empty())
+            self.negative_pub.publish(Empty())
     
         # print(image_np.shape)
         
