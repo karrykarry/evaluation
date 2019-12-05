@@ -13,10 +13,12 @@ import cv2
 
 
 model_path = "../model/learning-image.h5"
+# model_path = "../model/learning-image-2019-11-25.h5"
 # images_folder = "/home/amsl/Pictures/dataset/1/"
 # images_folder = "/home/amsl/Pictures/2018_/2/"
 # images_folder = "/home/amsl/Pictures/CNN/dataset-2019-09-25/0/"
-images_folder = "/home/amsl/Pictures/CNN/2018-09-09/2/"
+# images_folder = "/home/amsl/Pictures/CNN/2018-09-09dataset/2/"
+images_folder = "/home/amsl/Pictures/CNN/2019-09-25dataset/2/"
 
 
 miss_flag = True;

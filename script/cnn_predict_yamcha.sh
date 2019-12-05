@@ -1,6 +1,6 @@
 #!/bin/bash
 
-Path="/home/amsl/ros_catkin_ws/src/evaluation/cnn_script/"
+Path="/home/amsl/ros_catkin_ws/src/master_thsis/evaluation/cnn_script/"
 
 ssh -t -t yamcha<<EOF
 export ROS_MASTER_URI="http://192.168.0.224:11311"

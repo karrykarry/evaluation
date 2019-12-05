@@ -162,7 +162,7 @@ if __name__ == '__main__':
         Y_test = to_categorical(Y_test)
         Y_valid = to_categorical(Y_valid)
         
-        epochs = 15
+        epochs = 20
         batch_size = 128
 
         print('epoch:', epochs)

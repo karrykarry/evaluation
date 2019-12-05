@@ -17,7 +17,7 @@ X = []
 Y = []
 
 # path = '/home/amsl/Pictures/CNN/dataset-2019-09-25/'
-path = '/home/amsl/Pictures/CNN/2018-09-09/'
+path = '/home/amsl/Pictures/CNN/2018-09-09dataset/'
 
 image_shape = (21, 21, 3)
 
