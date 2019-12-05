@@ -205,6 +205,13 @@ target_link_libraries(itst_manager
 	${PCL_LIBRARIES}
 )
 
+
+add_executable(evaluation_function node/evaluation_function_node.cpp src/evaluation_function.cpp)
+target_link_libraries(evaluation_function
+	${catkin_LIBRARIES}
+)
+
+
 #############
 ## Install ##
 #############
