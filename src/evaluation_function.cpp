@@ -16,7 +16,7 @@ Eval::Eval(ros::NodeHandle n,ros::NodeHandle private_nh_)
 
 	context_sub = n.subscribe<std_msgs::Float64>("/eval_score/context", 1, &Eval::contextCallback, this);
 	cnn_sub = n.subscribe<std_msgs::Float64>("/eval_score/cnn", 1, &Eval::cnnCallback, this);
-	pose_sub = n.subscribe<geometry_msgs::Pose>("/map2context_result_", 1, &Eval::poseCallback, this);
+	pose_sub = n.subscribe<geometry_msgs::PoseStamped>("/map2context_result_", 1, &Eval::poseCallback, this);
 
 	private_nh_.param("Number_of_candidate", NUM_CANDIDATE, {5});
 
@@ -56,7 +56,7 @@ Eval::contextCallback(const std_msgs::Float64ConstPtr &msgs){
 }
 
 void
-Eval::poseCallback(const geometry_msgs::PoseConstPtr &msgs){	
+Eval::poseCallback(const geometry_msgs::PoseStampedConstPtr &msgs){	
 	buffer_pose[cnt_] = *msgs;
 }
 
@@ -69,7 +69,14 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 	if(cnt_==(NUM_CANDIDATE-1)){
 
 		int best_node = sorted_map.begin()->second;
-		answer_pub.publish(buffer_pose[best_node]);
+		tf_pub(buffer_pose[best_node]);
+
+		geometry_msgs::Pose p;
+		p.position.x = buffer_pose[best_node].pose.position.x;
+		p.position.y = buffer_pose[best_node].pose.position.y;
+		p.orientation.z = buffer_pose[best_node].pose.orientation.z;
+		
+		answer_pub.publish(p);
 
 		int i=0;	
 		for(auto const& entry: sorted_map){	
@@ -96,3 +103,17 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 	cnt_++;
 }
 
+
+void
+Eval::tf_pub(geometry_msgs::PoseStamped now_pose){
+	
+	transform.setOrigin( tf::Vector3( 
+				now_pose.pose.position.x, now_pose.pose.position.y, now_pose.pose.position.z) );
+	tf::Quaternion q;
+	q.setRPY(0, 0, now_pose.pose.orientation.z);	//roll, pitch, yaw
+
+	transform.setRotation(q);
+	br.sendTransform(tf::StampedTransform(
+				transform, now_pose.header.stamp, "/map" , "/context_estimate"));
+
+}
