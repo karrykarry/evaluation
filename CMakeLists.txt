@@ -212,6 +212,13 @@ target_link_libraries(evaluation_function
 )
 
 
+add_executable(nclt_map nclt/nclt_map.cpp)
+target_link_libraries(nclt_map
+	${catkin_LIBRARIES}
+	${PCL_LIBRARIES}
+)
+
+
 #############
 ## Install ##
 #############
