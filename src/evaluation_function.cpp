@@ -7,6 +7,15 @@
 #include"evaluation_function.hpp"
 Eval::Eval(ros::NodeHandle n,ros::NodeHandle private_nh_)
 {
+	// image_pub1 = n.advertise<sensor_msgs::Image>("/image/1", 1);	
+	// image_pub2 = n.advertise<sensor_msgs::Image>("/image/2", 1);	
+	// image_pub3 = n.advertise<sensor_msgs::Image>("/image/3", 1);	
+	// image_pub4 = n.advertise<sensor_msgs::Image>("/image/4", 1);	
+	// image_pub5 = n.advertise<sensor_msgs::Image>("/image/5", 1);	
+	// image_sub = n.subscribe<sensor_msgs::Image>("/pf_score/image", 1, &Eval::imageCallback, this);
+	
+	
+	
 	rebest_pub = n.advertise<std_msgs::Int32>("/score/best/itst", 10);	
 	answer_pub = n.advertise<geometry_msgs::Pose>("/map2context_result",10);
 	
@@ -18,11 +27,13 @@ Eval::Eval(ros::NodeHandle n,ros::NodeHandle private_nh_)
 	cnn_sub = n.subscribe<std_msgs::Float64>("/eval_score/cnn", 1, &Eval::cnnCallback, this);
 	pose_sub = n.subscribe<geometry_msgs::PoseStamped>("/map2context_result_", 1, &Eval::poseCallback, this);
 
+
 	private_nh_.param("Number_of_candidate", NUM_CANDIDATE, {5});
 
 	buffer_cnn.resize(NUM_CANDIDATE);
 	buffer_context.resize(NUM_CANDIDATE);
 	buffer_pose.resize(NUM_CANDIDATE);
+	buffer_image.resize(NUM_CANDIDATE);
 }
 
 Eval::~Eval(){
@@ -41,6 +52,7 @@ Eval::scoreCallback(const std_msgs::Int32MultiArrayConstPtr &msgs){
 	buffer_cnn.resize(NUM_CANDIDATE);
 	buffer_context.resize(NUM_CANDIDATE);
 	buffer_pose.resize(NUM_CANDIDATE);
+	buffer_image.resize(NUM_CANDIDATE);
 	sorted_map.clear();
 }
 
@@ -67,6 +79,13 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 	sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
 
 	if(cnt_==(NUM_CANDIDATE-1)){
+
+		// image_pub1.publish(buffer_image[0]);
+		// image_pub2.publish(buffer_image[1]);
+		// image_pub3.publish(buffer_image[2]);
+		// image_pub4.publish(buffer_image[3]);
+		// image_pub5.publish(buffer_image[4]);
+
 
 		int best_node = sorted_map.begin()->second;
 		tf_pub(buffer_pose[best_node]);
@@ -102,6 +121,18 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 		
 	cnt_++;
 }
+
+
+void
+Eval::imageCallback(const sensor_msgs::ImageConstPtr &msgs){
+	buffer_image[cnt_] = *msgs;
+	// if(cnt_==0) image_pub1.publish(*msgs);
+ 	// else if(cnt_==1) image_pub2.publish(*msgs);
+ 	// else if(cnt_==2) image_pub3.publish(*msgs);
+	// else if(cnt_==3) image_pub4.publish(*msgs);
+	// else image_pub5.publish(*msgs);
+}
+
 
 
 void

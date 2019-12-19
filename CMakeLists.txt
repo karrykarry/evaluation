@@ -218,6 +218,10 @@ target_link_libraries(nclt_map
 	${PCL_LIBRARIES}
 )
 
+add_executable(gt_tf_pub nclt/gt_tf_pub.cpp)
+target_link_libraries(gt_tf_pub
+	${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

@@ -14,6 +14,7 @@
 #include<std_msgs/Empty.h>
 #include<std_msgs/Bool.h>
 #include<sensor_msgs/PointCloud2.h>
+#include<sensor_msgs/Image.h>
 #include<geometry_msgs/Pose.h>
 #include<geometry_msgs/PoseStamped.h>
 
@@ -32,8 +33,18 @@ class Eval{
 		void contextCallback(const std_msgs::Float64ConstPtr &msgs);
 		void cnnCallback(const std_msgs::Float64ConstPtr &msgs);
 		void poseCallback(const geometry_msgs::PoseStampedConstPtr &msgs);
+		
+		void imageCallback(const sensor_msgs::ImageConstPtr &msgs);
 
 	private:
+
+		// ros::Publisher image_pub1;
+		// ros::Publisher image_pub2;
+		// ros::Publisher image_pub3;
+		// ros::Publisher image_pub4;
+		// ros::Publisher image_pub5;
+		// ros::Subscriber image_sub;
+
 		ros::Publisher rebest_pub;
 		ros::Publisher answer_pub;
 		ros::Publisher go_pub;
@@ -55,6 +66,7 @@ class Eval{
 		std::vector<double> buffer_context;
 		std::vector<double> buffer_cnn;
 		std::vector<geometry_msgs::PoseStamped> buffer_pose;
+		std::vector<sensor_msgs::Image> buffer_image;
 		
 		tf::TransformBroadcaster br;
 		tf::Transform transform; 

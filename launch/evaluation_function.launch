@@ -2,7 +2,7 @@
 <launch>
 
 
-	<arg name="number_of_candidate" default="1"/>
+	<arg name="number_of_candidate" default="5"/>
 
 	<!--下にitstを入れている理由 ： ファイルの番号と対応してみやすいかも -->
 
