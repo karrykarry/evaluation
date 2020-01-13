@@ -34,6 +34,13 @@ Eval::Eval(ros::NodeHandle n,ros::NodeHandle private_nh_)
 	buffer_context.resize(NUM_CANDIDATE);
 	buffer_pose.resize(NUM_CANDIDATE);
 	buffer_image.resize(NUM_CANDIDATE);
+
+
+	writing_file.open("/home/amsl/m2_result/all.txt", std::ios::out);
+	writing_file1.open("/home/amsl/m2_result/context.txt", std::ios::out);
+	writing_file2.open("/home/amsl/m2_result/cnn.txt", std::ios::out);
+	writing_file3.open("/home/amsl/m2_result/itst.txt", std::ios::out);
+
 }
 
 Eval::~Eval(){
@@ -54,6 +61,12 @@ Eval::scoreCallback(const std_msgs::Int32MultiArrayConstPtr &msgs){
 	buffer_pose.resize(NUM_CANDIDATE);
 	buffer_image.resize(NUM_CANDIDATE);
 	sorted_map.clear();
+
+
+	test_map1.clear();
+	test_map2.clear();
+	test_map3.clear();
+
 }
 
 
@@ -78,6 +91,11 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 	
 	sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
 
+	test_map1.insert(std::make_pair(buffer_context[cnt_], cnt_));
+	test_map2.insert(std::make_pair(buffer_cnn[cnt_], cnt_));
+	test_map3.insert(std::make_pair(buffer_itst.data[cnt_], cnt_));
+
+
 	if(cnt_==(NUM_CANDIDATE-1)){
 
 		// image_pub1.publish(buffer_image[0]);
@@ -85,7 +103,7 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 		// image_pub3.publish(buffer_image[2]);
 		// image_pub4.publish(buffer_image[3]);
 		// image_pub5.publish(buffer_image[4]);
-
+		test();
 
 		int best_node = sorted_map.begin()->second;
 		tf_pub(buffer_pose[best_node]);
@@ -110,7 +128,13 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 		buffer_context.resize(NUM_CANDIDATE);
 		buffer_pose.resize(NUM_CANDIDATE);
 		sorted_map.clear();
-	
+
+
+
+		test_map1.clear();
+		test_map2.clear();
+		test_map3.clear();
+
 	}
 	else{
 		std_msgs::Int32 rebest_num;
@@ -146,5 +170,45 @@ Eval::tf_pub(geometry_msgs::PoseStamped now_pose){
 	transform.setRotation(q);
 	br.sendTransform(tf::StampedTransform(
 				transform, now_pose.header.stamp, "/map" , "/context_estimate"));
+
+}
+
+void 
+Eval::test(){
+
+	int best_node = sorted_map.begin()->second;
+
+	writing_file
+		<<buffer_pose[best_node].pose.position.x<<","
+		<<buffer_pose[best_node].pose.position.y<<","
+		<<buffer_pose[best_node].pose.orientation.z
+		<<std::endl;
+
+
+	best_node = test_map1.begin()->second;
+
+	writing_file1
+		<<buffer_pose[best_node].pose.position.x<<","
+		<<buffer_pose[best_node].pose.position.y<<","
+		<<buffer_pose[best_node].pose.orientation.z
+		<<std::endl;
+
+
+	best_node = test_map2.begin()->second;
+
+	writing_file2
+		<<buffer_pose[best_node].pose.position.x<<","
+		<<buffer_pose[best_node].pose.position.y<<","
+		<<buffer_pose[best_node].pose.orientation.z
+		<<std::endl;
+
+
+	best_node = test_map3.begin()->second;
+
+	writing_file3
+		<<buffer_pose[best_node].pose.position.x<<","
+		<<buffer_pose[best_node].pose.position.y<<","
+		<<buffer_pose[best_node].pose.orientation.z
+		<<std::endl;
 
 }
