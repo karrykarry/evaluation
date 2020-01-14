@@ -90,6 +90,7 @@ Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){
 	buffer_cnn[cnt_] = msgs->data;
 	
 	sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
+	// sorted_map.insert(std::make_pair(buffer_context[cnt_]*0 + buffer_cnn[cnt_]*0 + buffer_itst.data[cnt_], cnt_));
 
 	test_map1.insert(std::make_pair(buffer_context[cnt_], cnt_));
 	test_map2.insert(std::make_pair(buffer_cnn[cnt_], cnt_));
