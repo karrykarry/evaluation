@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<launch>
+
+
+	<arg name="number_of_candidate" default="11"/>
+
+	<!--下にitstを入れている理由 ： ファイルの番号と対応してみやすいかも -->
+
+
+	<node name="heightmap_node" pkg="pcl_tutorials" type="rm_groundbynormal">
+		<param name="rm_normal" value="-0.9"/>
+		
+		<remap from="/velodyne_points" to="/perfect_velodyne/normal" />
+	</node>
+
+
+
+	<node pkg="perfect_velodyne" type="normal_estimation_refine_smoothing" name="NormalEstimationForVelodyne">
+		<param name="HNN" value="3l" />
+		<param name="MAX_RANGE" value="120.0f" />
+		<param name="MIN_RANGE" value="0.5f" />
+		<param name="VR" value="1.00f" />
+		<param name="skip" value="1.0f" />
+		<param name="vector_horizon" value="0.1f" />
+		<param name="vector_vertical" value="1.5f" />
+		<param name="DENS" value="0.5f" />
+		<param name="CURV" value="0.1f" />
+		<param name="DISP" value="1l" />
+
+	</node>
+
+
+
+	<node name="realtime_histogram_match_fb_normal" pkg="itst_desc" type="realtime_histogram_match_fb_normal" output="screen" >
+		<rosparam file="$(find ref_data_manager)/config/itst_info.yaml"/>
+		
+		<param name="Number_of_candidate" value="$(arg number_of_candidate)" />
+		
+		<remap from="/velodyne_points" to="/velodyne_obstacles" />
+		<remap from="/score/vis" to="/score/vis/itst" />
+		<remap from="/score/best" to="/score/best/itst" />
+		<remap from="/score/better" to="/score/better/itst" />
+	</node>
+
+	<node name="evaluation_function" pkg="evaluation" type="evaluation_function" output="screen" >
+		<param name="Number_of_candidate" value="$(arg number_of_candidate)" />
+	</node>
+	
+</launch>
+
+
+
+
