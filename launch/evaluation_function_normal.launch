@@ -7,7 +7,7 @@
 	<!--下にitstを入れている理由 ： ファイルの番号と対応してみやすいかも -->
 
 
-	<node name="heightmap_node" pkg="pcl_tutorials" type="rm_groundbynormal">
+	<node name="heightmap_node" pkg="ref_data_manager" type="rm_groundbynormal_z">
 		<param name="rm_normal" value="-0.9"/>
 		
 		<remap from="/velodyne_points" to="/perfect_velodyne/normal" />
@@ -16,6 +16,7 @@
 
 
 	<node pkg="perfect_velodyne" type="normal_estimation_refine_smoothing" name="NormalEstimationForVelodyne">
+		<remap from="/velodyne_points" to="/rm_cluster/removed_points" />
 		<param name="HNN" value="3l" />
 		<param name="MAX_RANGE" value="120.0f" />
 		<param name="MIN_RANGE" value="0.5f" />
@@ -32,10 +33,14 @@
 
 
 	<node name="realtime_histogram_match_fb_normal" pkg="itst_desc" type="realtime_histogram_match_fb_normal" output="screen" >
-		<rosparam file="$(find ref_data_manager)/config/itst_info.yaml"/>
+		<rosparam file="$(find ref_data_manager)/config/curv_info.yaml"/>
 		
 		<param name="Number_of_candidate" value="$(arg number_of_candidate)" />
-		
+		<param name="bin_num" value="11" />
+		<param name="split_r1" value="40" />
+		<param name="split_r2" value="20" />
+
+
 		<remap from="/velodyne_points" to="/velodyne_obstacles" />
 		<remap from="/score/vis" to="/score/vis/itst" />
 		<remap from="/score/best" to="/score/best/itst" />
@@ -43,6 +48,7 @@
 	</node>
 
 	<node name="evaluation_function" pkg="evaluation" type="evaluation_function" output="screen" >
+		<!-- <param name="Number_of_candidate" value="$(arg number_of_candidate)" /> -->
 		<param name="Number_of_candidate" value="$(arg number_of_candidate)" />
 	</node>
 	
