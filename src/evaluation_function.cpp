@@ -88,16 +88,25 @@ Eval::poseCallback(const geometry_msgs::PoseStampedConstPtr &msgs){
 void
 Eval::cnnCallback(const std_msgs::Float64ConstPtr &msgs){	
 	buffer_cnn[cnt_] = msgs->data;
-	
-	// sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_itst.data[cnt_], cnt_));
-	sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
+
+/*
+ * 参考まで
+	writing_file.open("/home/amsl/m2_result/all.txt", std::ios::out);
+	writing_file1.open("/home/amsl/m2_result/context.txt", std::ios::out);
+	writing_file2.open("/home/amsl/m2_result/cnn.txt", std::ios::out);
+	writing_file3.open("/home/amsl/m2_result/itst.txt", std::ios::out);
+*/
+
+	sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_itst.data[cnt_], cnt_));
+	// sorted_map.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
 	// sorted_map.insert(std::make_pair(buffer_context[cnt_]*0 + buffer_cnn[cnt_]*0 + buffer_itst.data[cnt_], cnt_));
 
 	test_map1.insert(std::make_pair(buffer_context[cnt_], cnt_));
 	// test_map2.insert(std::make_pair(buffer_cnn[cnt_], cnt_));
 	test_map3.insert(std::make_pair(buffer_itst.data[cnt_], cnt_));
 	// test_map1.insert(std::make_pair(buffer_context[cnt_] , cnt_));
-	test_map2.insert(std::make_pair(buffer_context[cnt_] + buffer_itst.data[cnt_], cnt_));
+	// test_map2.insert(std::make_pair(buffer_context[cnt_] + buffer_itst.data[cnt_], cnt_));
+	test_map2.insert(std::make_pair(buffer_context[cnt_] + buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
 	// test_map3.insert(std::make_pair(buffer_cnn[cnt_] + buffer_itst.data[cnt_], cnt_));
 
 
